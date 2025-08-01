@@ -34,7 +34,7 @@ public class DiabloDatabaseDataRetrieval
                 "WHERE u.user_name = ? " +
                 "group by user_name, first_name, last_name;");
 
-        query.setString(1,username);
+        query.setString(1, username);
         ResultSet result = query.executeQuery();
 
         if(result.next())
