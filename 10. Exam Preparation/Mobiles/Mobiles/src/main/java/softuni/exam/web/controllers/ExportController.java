@@ -10,18 +10,17 @@ import softuni.exam.service.SaleService;
 
 @Controller
 @RequestMapping("/export")
-public class ExportController extends BaseController
-{
+public class ExportController extends BaseController {
+
     private final DeviceService deviceService;
     @Autowired
-    public ExportController(DeviceService deviceService)
-    {
+    public ExportController(DeviceService deviceService) {
         this.deviceService = deviceService;
     }
 
+
     @GetMapping("/devices")
-    public ModelAndView exportDevices()
-    {
+    public ModelAndView exportDevices() {
         String exportedDevices = this.deviceService.exportDevices();
 
         return super.view("export/export-devices.html", "exportedDevices", exportedDevices);

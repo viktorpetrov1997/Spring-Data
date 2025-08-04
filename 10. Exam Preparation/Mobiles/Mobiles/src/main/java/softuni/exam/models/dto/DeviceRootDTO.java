@@ -9,18 +9,18 @@ import java.util.List;
 
 @XmlRootElement(name = "devices")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DevicesImportDto
+public class DeviceRootDTO
 {
     @XmlElement(name = "device")
-    private List<DeviceInputDto> input;
+    private List<DeviceDTO> deviceDTOS;
 
-    public List<DeviceInputDto> getInput()
+    public List<DeviceDTO> getDeviceDTOS()
     {
-        return input;
+        return deviceDTOS;
     }
 
-    public void setInput(List<DeviceInputDto> input)
+    public void setDeviceDTOS(List<DeviceDTO> deviceDTOS)
     {
-        this.input = input;
+        this.deviceDTOS = deviceDTOS;
     }
 }

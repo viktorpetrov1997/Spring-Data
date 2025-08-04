@@ -1,21 +1,18 @@
 package softuni.exam.models.dto;
 
 import com.google.gson.annotations.Expose;
-import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
-public class SaleInputDto
+public class SaleDTO
 {
     @Expose
     private Boolean discounted;
 
     @Expose
-    @NotNull
     @Length(min = 7, max = 7)
     private String number;
 
     @Expose
-    @NotNull
     private String saleDate;
 
     @Expose

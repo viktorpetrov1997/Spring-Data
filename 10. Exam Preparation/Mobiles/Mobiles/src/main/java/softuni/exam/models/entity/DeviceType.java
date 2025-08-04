@@ -1,4 +1,4 @@
-package softuni.exam.models.enums;
+package softuni.exam.models.entity;
 
 public enum DeviceType
 {

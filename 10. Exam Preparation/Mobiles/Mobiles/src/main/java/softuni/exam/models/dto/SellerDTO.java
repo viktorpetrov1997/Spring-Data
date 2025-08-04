@@ -4,7 +4,7 @@ import com.google.gson.annotations.Expose;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
-public class SellerInputDto
+public class SellerDTO
 {
     @Expose
     @NotNull

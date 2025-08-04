@@ -4,28 +4,19 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 import org.springframework.stereotype.Component;
-import softuni.exam.models.dto.DevicesImportDto;
 
-import java.io.StringReader;
+import java.io.File;
 
 @Component
 public class XmlParserImpl implements XmlParser
 {
-    private final JAXBContext jaxbContext;
-    private final Unmarshaller unmarshaller;
-
-    public XmlParserImpl() throws JAXBException
-    {
-        jaxbContext = JAXBContext.newInstance(DevicesImportDto.class);
-        unmarshaller = jaxbContext.createUnmarshaller();
-    }
-
     @Override
-    public <T> T fromXml(String xml, Class<T> tClass) throws JAXBException
+    @SuppressWarnings("unchecked")
+    public <T> T fromFile(String filePath, Class<T> tClass) throws JAXBException
     {
-        try(StringReader reader = new StringReader(xml))
-        {
-            return (T) unmarshaller.unmarshal(reader);
-        }
+        JAXBContext jaxbContext = JAXBContext.newInstance(tClass);
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+
+        return (T) unmarshaller.unmarshal(new File(filePath));
     }
 }

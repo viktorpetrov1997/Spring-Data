@@ -15,27 +15,25 @@ import java.time.format.DateTimeFormatter;
 
 
 @Configuration
-public class ApplicationBeanConfiguration
-{
+public class ApplicationBeanConfiguration {
+
+
     @Bean
-    public Gson gson()
-    {
+    public Gson gson() {
         return new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
                 .setPrettyPrinting()
                 .create();
     }
 
+
     @Bean
-    public ModelMapper modelMapper()
-    {
+    public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
 
-        modelMapper.addConverter(new Converter<String, LocalDateTime>()
-        {
+        modelMapper.addConverter(new Converter<String, LocalDateTime>() {
             @Override
-            public LocalDateTime convert(MappingContext<String, LocalDateTime> mappingContext)
-            {
+            public LocalDateTime convert(MappingContext<String, LocalDateTime> mappingContext) {
                 LocalDateTime parse = LocalDateTime.parse(mappingContext.getSource(),
                         DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                 return parse;
@@ -44,4 +42,5 @@ public class ApplicationBeanConfiguration
 
         return modelMapper;
     }
+
 }

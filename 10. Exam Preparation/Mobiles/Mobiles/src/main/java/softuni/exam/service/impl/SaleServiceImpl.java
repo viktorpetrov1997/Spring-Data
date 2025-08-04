@@ -3,36 +3,37 @@ package softuni.exam.service.impl;
 import com.google.gson.Gson;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import softuni.exam.models.dto.SaleInputDto;
+import softuni.exam.models.dto.SaleDTO;
 import softuni.exam.models.entity.Sale;
 import softuni.exam.models.entity.Seller;
 import softuni.exam.repository.SaleRepository;
+import softuni.exam.repository.SellerRepository;
 import softuni.exam.service.SaleService;
-import softuni.exam.service.SellerService;
 import softuni.exam.util.ValidationUtil;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 @Service
 public class SaleServiceImpl implements SaleService
 {
-    private final SellerService sellerService;
     private final SaleRepository saleRepository;
     private final Gson gson;
     private final ValidationUtil validationUtil;
     private final ModelMapper modelMapper;
+    private final SellerRepository sellerRepository;
 
-    public SaleServiceImpl(SellerService sellerService, SaleRepository saleRepository, Gson gson, ValidationUtil validationUtil, ModelMapper modelMapper)
+    private static final String SALE_FILE_PATH = "src/main/resources/files/json/sales.json";
+
+    public SaleServiceImpl(SaleRepository saleRepository, Gson gson, ValidationUtil validationUtil, ModelMapper modelMapper, SellerRepository sellerRepository)
     {
-        this.sellerService = sellerService;
         this.saleRepository = saleRepository;
         this.gson = gson;
         this.validationUtil = validationUtil;
         this.modelMapper = modelMapper;
+        this.sellerRepository = sellerRepository;
     }
 
     @Override
@@ -44,55 +45,44 @@ public class SaleServiceImpl implements SaleService
     @Override
     public String readSalesFileContent() throws IOException
     {
-        Path path = Path.of("src/main/resources/files/json/sales.json");
-        return Files.readString(path);
+        return Files.readString(Path.of(SALE_FILE_PATH));
     }
 
     @Override
     public String importSales() throws IOException
     {
-        SaleInputDto[] inputDtos = gson.fromJson(readSalesFileContent(), SaleInputDto[].class);
+        SaleDTO[] saleDTOS = gson.fromJson(readSalesFileContent(), SaleDTO[].class);
 
         StringBuilder sb = new StringBuilder();
-        for(SaleInputDto inputDto : inputDtos)
+        for(SaleDTO saleDTO : saleDTOS)
         {
-            Sale createdSale = create(inputDto);
-
-            if(createdSale == null)
+            Sale sale = createSale(saleDTO);
+            if(sale == null)
             {
                 sb.append(String.format("Invalid sale%n"));
             }
             else
             {
-                sb.append(String.format("Successfully imported sale with number %s%n", createdSale.getNumber()));
+                sb.append(String.format("Successfully imported sale with number %s%n", sale.getNumber()));
             }
         }
 
         return sb.toString();
     }
 
-    @Override
-    public Sale getReferenceById(Long id)
+    private Sale createSale(SaleDTO saleDTO)
     {
-        return saleRepository.getReferenceById(id);
-    }
+        if(!validationUtil.isValid(saleDTO)) return null;
 
-    private Sale create(SaleInputDto inputDto)
-    {
-        if(!validationUtil.isValid(inputDto)) return null;
+        Optional<Sale> saleByNumber = saleRepository.findSaleByNumber(saleDTO.getNumber());
+        if(saleByNumber.isPresent())
+        {
+            return null;
+        }
 
         try
         {
-            Sale sale = modelMapper.map(inputDto, Sale.class);
-            sale.setSaleDate(LocalDateTime.parse(inputDto.getSaleDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-
-            Long sellerId = inputDto.getSeller();
-            if(sellerId != null)
-            {
-                Seller seller = sellerService.getReferenceById(sellerId);
-                sale.setSeller(seller);
-            }
-
+            Sale sale = modelMapper.map(saleDTO, Sale.class);
             saleRepository.save(sale);
 
             return sale;

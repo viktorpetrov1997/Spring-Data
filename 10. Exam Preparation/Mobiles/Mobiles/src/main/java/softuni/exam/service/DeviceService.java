@@ -2,10 +2,7 @@ package softuni.exam.service;
 
 import jakarta.xml.bind.JAXBException;
 
-
 import java.io.IOException;
-
-// TODO: Implement all methods
 
 public interface DeviceService
 {

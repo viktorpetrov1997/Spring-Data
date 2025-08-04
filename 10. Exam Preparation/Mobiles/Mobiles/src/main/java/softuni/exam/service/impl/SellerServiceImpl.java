@@ -3,7 +3,7 @@ package softuni.exam.service.impl;
 import com.google.gson.Gson;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import softuni.exam.models.dto.SellerInputDto;
+import softuni.exam.models.dto.SellerDTO;
 import softuni.exam.models.entity.Seller;
 import softuni.exam.repository.SellerRepository;
 import softuni.exam.service.SellerService;
@@ -12,21 +12,24 @@ import softuni.exam.util.ValidationUtil;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
 @Service
 public class SellerServiceImpl implements SellerService
 {
     private final SellerRepository sellerRepository;
     private final Gson gson;
-    private final ModelMapper modelMapper;
     private final ValidationUtil validationUtil;
+    private final ModelMapper modelMapper;
 
-    public SellerServiceImpl(SellerRepository sellerRepository, Gson gson, ModelMapper modelMapper, ValidationUtil validationUtil)
+    private static final String SELLER_FILE_PATH = "src/main/resources/files/json/sellers.json";
+
+    public SellerServiceImpl(SellerRepository sellerRepository, Gson gson, ValidationUtil validationUtil, ModelMapper modelMapper)
     {
         this.sellerRepository = sellerRepository;
         this.gson = gson;
-        this.modelMapper = modelMapper;
         this.validationUtil = validationUtil;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -38,46 +41,44 @@ public class SellerServiceImpl implements SellerService
     @Override
     public String readSellersFromFile() throws IOException
     {
-        Path path = Path.of("src/main/resources/files/json/sellers.json");
-        return Files.readString(path);
+        return Files.readString(Path.of(SELLER_FILE_PATH));
     }
 
     @Override
     public String importSellers() throws IOException
     {
-        SellerInputDto[] inputDtos = gson.fromJson(readSellersFromFile(), SellerInputDto[].class);
+        SellerDTO[] sellerDTOS = gson.fromJson(readSellersFromFile(), SellerDTO[].class);
 
         StringBuilder sb = new StringBuilder();
-        for(SellerInputDto inputDto : inputDtos)
+        for(SellerDTO sellerDTO : sellerDTOS)
         {
-            Seller createdSeller = create(inputDto);
-
-            if(createdSeller == null)
+            Seller seller = createSeller(sellerDTO);
+            if(seller == null)
             {
                 sb.append(String.format("Invalid seller%n"));
             }
             else
             {
-                sb.append(String.format("Successfully imported seller %s %s%n", createdSeller.getFirstName(), createdSeller.getLastName()));
+                sb.append(String.format("Successfully imported seller %s %s%n", seller.getFirstName(), seller.getLastName()));
             }
         }
 
         return sb.toString();
     }
 
-    @Override
-    public Seller getReferenceById(Long id)
+    private Seller createSeller(SellerDTO sellerDTO)
     {
-        return sellerRepository.getReferenceById(id);
-    }
+        if(!validationUtil.isValid(sellerDTO)) return null;
 
-    private Seller create(SellerInputDto inputDto)
-    {
-        if(!validationUtil.isValid(inputDto)) return null;
+        Optional<Seller> sellerByLastName = sellerRepository.findSellerByLastName(sellerDTO.getLastName());
+        if(sellerByLastName.isPresent())
+        {
+            return null;
+        }
 
         try
         {
-            Seller seller = modelMapper.map(inputDto, Seller.class);
+            Seller seller = modelMapper.map(sellerDTO, Seller.class);
             sellerRepository.save(seller);
 
             return seller;

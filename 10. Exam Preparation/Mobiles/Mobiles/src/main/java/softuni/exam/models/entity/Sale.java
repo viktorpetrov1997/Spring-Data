@@ -3,6 +3,7 @@ package softuni.exam.models.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "sales")
@@ -11,7 +12,7 @@ public class Sale extends BaseEntity
     @Column(name = "discounted")
     private Boolean discounted;
 
-    @Column(name = "number", nullable = false, unique = true)
+    @Column(name = "number", unique = true, nullable = false)
     private String number;
 
     @Column(name = "sale_date", nullable = false)
@@ -20,6 +21,9 @@ public class Sale extends BaseEntity
     @ManyToOne
     @JoinColumn(name = "seller_id")
     private Seller seller;
+
+    @OneToMany(mappedBy = "sale")
+    private List<Device> devices;
 
     public Boolean getDiscounted()
     {
@@ -59,5 +63,15 @@ public class Sale extends BaseEntity
     public void setSeller(Seller seller)
     {
         this.seller = seller;
+    }
+
+    public List<Device> getDevices()
+    {
+        return devices;
+    }
+
+    public void setDevices(List<Device> devices)
+    {
+        this.devices = devices;
     }
 }

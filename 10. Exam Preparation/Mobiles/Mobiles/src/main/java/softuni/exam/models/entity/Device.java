@@ -1,7 +1,6 @@
 package softuni.exam.models.entity;
 
 import jakarta.persistence.*;
-import softuni.exam.models.enums.DeviceType;
 
 @Entity
 @Table(name = "devices")
@@ -10,11 +9,11 @@ public class Device extends BaseEntity
     @Column(name = "brand", nullable = false)
     private String brand;
 
-    @Column(name = "device_type")
     @Enumerated(EnumType.STRING)
-    private DeviceType type;
+    @Column(name = "device_type")
+    private DeviceType deviceType;
 
-    @Column(name = "model", nullable = false, unique = true)
+    @Column(name = "model", unique = true, nullable = false)
     private String model;
 
     @Column(name = "price")
@@ -37,14 +36,14 @@ public class Device extends BaseEntity
         this.brand = brand;
     }
 
-    public DeviceType getType()
+    public DeviceType getDeviceType()
     {
-        return type;
+        return deviceType;
     }
 
-    public void setType(DeviceType type)
+    public void setDeviceType(DeviceType deviceType)
     {
-        this.type = type;
+        this.deviceType = deviceType;
     }
 
     public String getModel()
