@@ -1,0 +1,29 @@
+</body>
+<th:block th:fragment xmlns:th="http://www.w3.org/1999/xhtml">
+    <div class="container justify-content-center mt-3">
+        <div class="jumbotron index-jumbo d-flex justify-content-center">
+            <div class="container">
+                <div class="col-md-12 d-flex border-left border-bottom w-50 ">
+                    <h1 class="myBackgroundColor">Solar Moons</h1>
+                </div>
+                <div class="col-md-12 d-flex mt-3">
+                    <h4>Moons, or natural satellites, are celestial bodies that orbit planets or dwarf planets.
+                        In our Solar System, there are over 200 known moons, each with unique characteristics.
+                        Moons vary widely in size, composition, and behavior, with some potentially harboring conditions for life.
+                        Let's take a look at the bigger and more significant ones.</h4>
+                </div>
+                <div class="col-md-12 text-center">
+                    <th:block th:if="${areImported == true}">
+                        <p><a class="btn btn-primary my-5" th:href="@{/export/moons}">Export Moons From DB</a></p>
+                    </th:block>
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <th:block th:if="${areImported == false}">
+                            <p class="bg-secondary rounded p-2">Тo see the next task, first import all XML and JSON
+                                files.</p>
+                        </th:block>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>

@@ -1,0 +1,3 @@
+TRUNCATE TABLE planets;
+TRUNCATE TABLE discoverers;
+TRUNCATE TABLE moons;
