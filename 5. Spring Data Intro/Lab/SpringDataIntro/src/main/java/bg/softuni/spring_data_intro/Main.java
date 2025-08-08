@@ -8,7 +8,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -27,15 +26,15 @@ public class Main implements CommandLineRunner
     @Override
     public void run(String... args) throws Exception
     {
-        //accountService.withdrawMoney(BigDecimal.TEN, 1L);
+        // accountService.withdrawMoney(BigDecimal.TEN, 1L);
 
         // User freeUser = new User("bankin", 22);
 
         // userService.registerUser(freeUser);
 
-        Optional<User> user = userService.find("bankin");
+        // Optional<User> user = userService.find("bankin");
 
-        accountService.transferMoney(BigDecimal.ONE, user.get(), 1L);
+        // accountService.transferMoney(BigDecimal.ONE, user.get(), 1L);
 
         // System.out.println("Started from Spring!!!");
 
